@@ -10,7 +10,6 @@ import pandas as pd
 st.set_page_config(page_title="柔道求生預測器", layout="centered")
 st.title("🥋 柔道求生預測器")
 st.caption("來看看在各種條件下你撐得過幾秒！")
-
 st.markdown("---")
 
 # -------------------------------
@@ -23,19 +22,19 @@ def load_models():
 
 aft_models = load_models()
 
-# 模型選擇
+# 模型選擇（中文顯示）
 model_options = {
-    "🏆 Ippon after First Shido": "aft_ippon_first",
-    "💪🏽 Match End after First Shido": "aft_end_first",
-    "🏆 Ippon after Second Shido": "aft_ippon_second",
-    "💪🏽 Match End after Second Shido": "aft_end_second"
+    "🏆 對手第一次指導後，我方一本": "aft_ippon_first",
+    "💪🏽 對手第一次指導後，比賽結束": "aft_end_first",
+    "🏆 對手第二次指導後，我方一本": "aft_ippon_second",
+    "💪🏽 對手第二次指導後，比賽結束": "aft_end_second"
 }
 selected_label = st.selectbox("💡 請選擇預測場景", list(model_options.keys()))
 selected_model_key = model_options[selected_label]
 aft_model = aft_models[selected_model_key]
 
 # -------------------------------
-# Gender 與 Weight Class
+# 比賽設定輸入
 # -------------------------------
 st.subheader("📋 請輸入比賽設定")
 
@@ -55,8 +54,18 @@ else:
 weight_label = st.selectbox("🏋️‍♂️ 重量級別", weight_labels)
 weight_rank = weight_labels.index(weight_label) + 1
 
+# 圖表用英文對照
+weight_map_en = {
+    "男子 -60 kg": "Men -60 kg",     "男子 -66 kg": "Men -66 kg",     "男子 -73 kg": "Men -73 kg",
+    "男子 -81 kg": "Men -81 kg",     "男子 -90 kg": "Men -90 kg",     "男子 -100 kg": "Men -100 kg",
+    "男子 +100 kg": "Men +100 kg",   "女子 -48 kg": "Women -48 kg",   "女子 -52 kg": "Women -52 kg",
+    "女子 -57 kg": "Women -57 kg",   "女子 -63 kg": "Women -63 kg",   "女子 -70 kg": "Women -70 kg",
+    "女子 -78 kg": "Women -78 kg",   "女子 +78 kg": "Women +78 kg"
+}
+weight_label_en = weight_map_en.get(weight_label, weight_label)
+
 # -------------------------------
-# 其餘條件輸入
+# 其他條件輸入
 # -------------------------------
 with st.form(key="input_form"):
     col1, col2 = st.columns(2)
@@ -96,7 +105,7 @@ if submit:
     fig, ax = plt.subplots()
     title = (
         f"Condition | "
-        f"Weight: {weight_label}, "
+        f"Weight: {weight_label_en}, "
         f"Shido: {winner_shido_count}, "
         f"Waza-ari: {'Yes' if winner_has_waza_ari == 1 else 'No'}, "
         f"Ranking Diff: {ranking_diff}, "
@@ -117,7 +126,7 @@ if submit:
     st.markdown("### 🧮 在指定秒數的預測結果")
     surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
     col1, col2 = st.columns(2)
-    col1.metric("撐住機率 💪🏽", f"{surv_prob * 100:.2f}%")
+    col1.metric("撐住機率 💪", f"{surv_prob * 100:.2f}%")
     col2.metric("結束機率 ☠️", f"{(1 - surv_prob) * 100:.2f}%")
 
 # -------------------------------
@@ -132,7 +141,7 @@ with st.expander("📘 模型說明與使用須知"):
 - 模型會依照你的輸入條件（例如有沒有技有、獲得幾次指導、是否打到延長賽）來調整整體的生存曲線。
 - 這些預測是根據統計趨勢，不是命運判定 😎
 
-若你發現預測很離譜，請不要找裁判或我負責
+若你發現預測很離譜，請不要找裁判或我負責（請直接找模型設計者...也就是你自己？）
     """)
 
 with st.expander("🧬 使用變數一覽"):
