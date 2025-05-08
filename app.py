@@ -4,7 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# -------------------------------
+# 頁面設定
+# -------------------------------
+st.set_page_config(page_title="Judo Survival Predictor", layout="centered")
+
+st.title("🥋 Judo Survival Probability Explorer")
+st.caption("Explore winning probabilities based on match conditions using a Log-Normal AFT survival model.")
+
+st.markdown("---")
+
+# -------------------------------
 # 載入模型
+# -------------------------------
 @st.cache_resource
 def load_models():
     with open("judo_aft_models.pkl", "rb") as f:
@@ -12,57 +24,72 @@ def load_models():
 
 aft_models = load_models()
 
-# 選擇模型
+# 模型選單
 model_options = {
-    "🏆 Ippon after first Shido": "aft_ippon_first",
-    "🏁 End after first Shido": "aft_end_first",
-    "🥋 Ippon after second Shido": "aft_ippon_second",
-    "⏱ End after second Shido": "aft_end_second"
+    "🏆 Ippon after First Shido": "aft_ippon_first",
+    "🏁 Match End after First Shido": "aft_end_first",
+    "🥋 Ippon after Second Shido": "aft_ippon_second",
+    "⏱ Match End after Second Shido": "aft_end_second"
 }
-selected_label = st.selectbox("Choose a model", list(model_options.keys()))
+selected_label = st.selectbox("Select Model Type", list(model_options.keys()))
 selected_model_key = model_options[selected_label]
 aft_model = aft_models[selected_model_key]
 
-# 輸入條件
-st.sidebar.header("Input conditions")
+st.markdown("---")
 
-gender = st.sidebar.selectbox("Gender", ["M", "F"])
-round_ = st.sidebar.selectbox("Round", ["R16", "QF", "SF", "F"])
-category = st.sidebar.selectbox("Category", ["-60", "-66", "-73", "-81", "Other"])
-winner_shido_count = st.sidebar.selectbox("Winner Shido Count", [0, 1, 2])
+# -------------------------------
+# Sidebar 輸入參數
+# -------------------------------
+st.sidebar.header("📌 Match Conditions")
+
+gender = st.sidebar.radio("Gender", ["M", "F"])
+winner_shido_count = st.sidebar.selectbox("Winner's Shido Count", [0, 1, 2])
 winner_has_waza_ari = st.sidebar.selectbox("Winner has Waza-ari", [0, 1])
 ranking_diff = st.sidebar.slider("Ranking Difference (Winner - Rival)", -30, 30, 0)
+weight_rank = st.sidebar.selectbox("Weight Rank (custom encoded)", [1, 2, 3, 4, 5])
+year = st.sidebar.selectbox("Year", [2020, 2024])
 
-# 模擬輸入 DataFrame
+# -------------------------------
+# 建立模型輸入資料
+# -------------------------------
 X = pd.DataFrame([{
     "gender": gender,
-    "round": round_,
-    "category": category,
     "winner_shido_count": winner_shido_count,
     "winner_has_waza_ari": winner_has_waza_ari,
-    "ranking_diff": ranking_diff
+    "ranking_diff": ranking_diff,
+    "weight_rank": weight_rank,
+    "year": year
 }])
 
-# 輸入時間點
-t_input = st.number_input("Enter a time point (seconds)", min_value=0, max_value=180, value=60)
+# -------------------------------
+# 使用者輸入時間點
+# -------------------------------
+st.subheader("⏱ Input Time (in seconds)")
+t_input = st.number_input("Enter a time point", min_value=0, max_value=180, value=60, step=1)
 
-# 生存函數預測
+# -------------------------------
+# 生存函數預測 & 圖形輸出
+# -------------------------------
 timeline = np.linspace(0, 180, 200)
 surv_func = aft_model.predict_survival_function(X, times=timeline)
 
-# 畫圖
-st.subheader("Survival Probability vs. Time")
+st.subheader("📈 Survival Function Plot")
+
 fig, ax = plt.subplots()
-ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t)")
-ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1 - S(t)")
+ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t) – Survival")
+ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1 - S(t) – End Probability")
 ax.axvline(x=t_input, color='gray', linestyle='--')
 ax.set_xlabel("Time (sec)")
 ax.set_ylabel("Probability")
 ax.legend()
 st.pyplot(fig)
 
-# 顯示指定時間點的機率
+# -------------------------------
+# 顯示 S(t) / 1 - S(t)
+# -------------------------------
+st.markdown("### 📊 Predicted Probabilities at Selected Time")
 surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
-st.metric("S(t)", f"{surv_prob * 100:.2f}%")
-st.metric("1 - S(t)", f"{(1 - surv_prob) * 100:.2f}%")
-# Streamlit app code will be added here.
+
+col1, col2 = st.columns(2)
+col1.metric("Survival Probability S(t)", f"{surv_prob * 100:.2f}%")
+col2.metric("End Probability 1 - S(t)", f"{(1 - surv_prob) * 100:.2f}%")
