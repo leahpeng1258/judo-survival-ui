@@ -35,41 +35,43 @@ selected_model_key = model_options[selected_label]
 aft_model = aft_models[selected_model_key]
 
 # -------------------------------
-# 條件輸入表單區塊
+# Gender 與 Weight Class：即時變更
+# -------------------------------
+st.subheader("📋 Select Match Conditions")
+
+gender = st.selectbox("Gender", ["M", "F"])
+
+# 根據 gender 顯示不同的量級
+if gender == "M":
+    weight_labels = [
+        "Men -60 kg", "Men -66 kg", "Men -73 kg",
+        "Men -81 kg", "Men -90 kg", "Men -100 kg", "Men +100 kg"
+    ]
+else:
+    weight_labels = [
+        "Women -48 kg", "Women -52 kg", "Women -57 kg",
+        "Women -63 kg", "Women -70 kg", "Women -78 kg", "Women +78 kg"
+    ]
+
+weight_label = st.selectbox("Weight Class", weight_labels)
+weight_rank = weight_labels.index(weight_label) + 1  # 編碼為 1~7
+
+# -------------------------------
+# 其餘條件輸入（包在 form 中）
 # -------------------------------
 with st.form(key="input_form"):
-    st.subheader("📋 Select Match Conditions")
-
     col1, col2 = st.columns(2)
     with col1:
-        gender = st.selectbox("Gender", ["M", "F"])
-
-        # 根據 gender 顯示不同的量級
-        if gender == "M":
-            weight_labels = [
-                "Men -60 kg", "Men -66 kg", "Men -73 kg",
-                "Men -81 kg", "Men -90 kg", "Men -100 kg", "Men +100 kg"
-            ]
-        else:
-            weight_labels = [
-                "Women -48 kg", "Women -52 kg", "Women -57 kg",
-                "Women -63 kg", "Women -70 kg", "Women -78 kg", "Women +78 kg"
-            ]
-
-        weight_label = st.selectbox("Weight Class", weight_labels)
-        weight_rank = weight_labels.index(weight_label) + 1  # 編碼為 1~7
-
         winner_shido_count = st.selectbox("Winner's Shido Count", [0, 1, 2])
-
+        year = st.selectbox("Match Year", [2020, 2024])
     with col2:
         winner_has_waza_ari = st.selectbox("Winner has Waza-ari", [0, 1])
-        year = st.selectbox("Match Year", [2020, 2024])
         ranking_diff = st.slider("Ranking Difference (Winner - Rival)", -100, 100, 0)
 
     st.markdown("⏱ **Enter Time Point (in seconds)**")
     t_input = st.number_input("Time", min_value=0, max_value=800, value=60, step=1)
 
-    submit = st.form_submit_button("🔁 Update Prediction")
+    submit = st.form_submit_button("Predict!")
 
 # -------------------------------
 # 生存函數預測與繪圖
@@ -90,8 +92,8 @@ if submit:
     st.subheader("📈 Survival Probability Curve")
 
     fig, ax = plt.subplots()
-    ax.plot(surv_func.index, surv_func.values[:, 0], label="🟦 S(t) Survival", color="#92d4e0", linewidth=2.5)
-    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="🟥 1 - S(t) End", color="#e09294", linewidth=2.5)
+    ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t): Survival Probability", color="#92d4e0", linewidth=2.5)
+    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1-S(t): End Probability", color="#e09294", linewidth=2.5)
     ax.axvline(x=t_input, color='gray', linestyle='--')
     ax.set_xlabel("Time (sec)")
     ax.set_ylabel("Probability")
@@ -103,5 +105,5 @@ if submit:
     st.markdown("### 📊 Predicted Probabilities at Selected Time")
     surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
     col1, col2 = st.columns(2)
-    col1.metric("S(t) – Survival Probability", f"{surv_prob * 100:.2f}%")
-    col2.metric("1 - S(t) – End Probability", f"{(1 - surv_prob) * 100:.2f}%")
+    col1.metric("S(t): Survival Probability", f"{surv_prob * 100:.2f}%")
+    col2.metric("1-S(t): End Probability", f"{(1 - surv_prob) * 100:.2f}%")
