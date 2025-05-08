@@ -93,7 +93,7 @@ if submit:
 
     fig, ax = plt.subplots()
     title = (
-        f"S(t) | Gender: {gender}, "
+        f"Condition | "
         f"Weight: {weight_label}, "
         f"Shido: {winner_shido_count}, "
         f"Waza-ari: {'Yes' if winner_has_waza_ari == 1 else 'No'}, "
