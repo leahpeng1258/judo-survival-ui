@@ -93,7 +93,7 @@ if submit:
 
     st.subheader("📈 撐住機率 VS 結束機率")
 
-   fig, ax = plt.subplots()
+    fig, ax = plt.subplots()
     title = (
         f"條件｜"
         f"{weight_label}、"
