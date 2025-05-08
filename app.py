@@ -8,7 +8,7 @@ import pandas as pd
 # 頁面設定
 # -------------------------------
 st.set_page_config(page_title="Judo Survival Predictor", layout="centered")
-st.title("🥋 Judo Survival Probability Explorer")
+st.title("🥋 Judo Survival Predictor")
 st.caption("Explore winning probabilities under different match conditions.")
 
 st.markdown("---")
@@ -26,9 +26,9 @@ aft_models = load_models()
 # 模型選擇
 model_options = {
     "🏆 Ippon after First Shido": "aft_ippon_first",
-    "🏁 Match End after First Shido": "aft_end_first",
-    "🥋 Ippon after Second Shido": "aft_ippon_second",
-    "⏱ Match End after Second Shido": "aft_end_second"
+    "💪🏽 Match End after First Shido": "aft_end_first",
+    "🏆 Ippon after Second Shido": "aft_ippon_second",
+    "💪🏽 Match End after Second Shido": "aft_end_second"
 }
 selected_label = st.selectbox("Select AFT Model", list(model_options.keys()))
 selected_model_key = model_options[selected_label]
@@ -43,8 +43,24 @@ with st.form(key="input_form"):
     col1, col2 = st.columns(2)
     with col1:
         gender = st.selectbox("Gender", ["M", "F"])
+
+        # 根據 gender 顯示不同的量級
+        if gender == "M":
+            weight_labels = [
+                "Men -60 kg", "Men -66 kg", "Men -73 kg",
+                "Men -81 kg", "Men -90 kg", "Men -100 kg", "Men +100 kg"
+            ]
+        else:
+            weight_labels = [
+                "Women -48 kg", "Women -52 kg", "Women -57 kg",
+                "Women -63 kg", "Women -70 kg", "Women -78 kg", "Women +78 kg"
+            ]
+
+        weight_label = st.selectbox("Weight Class", weight_labels)
+        weight_rank = weight_labels.index(weight_label) + 1  # 編碼為 1~7
+
         winner_shido_count = st.selectbox("Winner's Shido Count", [0, 1, 2])
-        weight_rank = st.selectbox("Weight Rank (custom encoded)", [1, 2, 3, 4, 5])
+
     with col2:
         winner_has_waza_ari = st.selectbox("Winner has Waza-ari", [0, 1])
         year = st.selectbox("Match Year", [2020, 2024])
@@ -74,8 +90,8 @@ if submit:
     st.subheader("📈 Survival Probability Curve")
 
     fig, ax = plt.subplots()
-    ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t) Survival Probability", color="#90d5de", linewidth=2.5)
-    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1 - S(t) End Probability", color="#de9090", linewidth=2.5)
+    ax.plot(surv_func.index, surv_func.values[:, 0], label="🟦 S(t) Survival", color="#92d4e0", linewidth=2.5)
+    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="🟥 1 - S(t) End", color="#e09294", linewidth=2.5)
     ax.axvline(x=t_input, color='gray', linestyle='--')
     ax.set_xlabel("Time (sec)")
     ax.set_ylabel("Probability")
