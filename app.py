@@ -7,6 +7,11 @@ import pandas as pd
 # -------------------------------
 # 頁面設定
 # -------------------------------
+
+# 設定 matplotlib 使用思源黑體（Noto Sans CJK TC）
+matplotlib.rcParams['font.family'] = 'Noto Sans TC'  # 推薦字型，支援繁體
+matplotlib.rcParams['axes.unicode_minus'] = False  # 確保負號顯示正確
+
 st.set_page_config(page_title="柔道求生預測器", layout="centered")
 st.title("🥋 柔道求生預測器")
 st.caption("來看看在各種條件下你撐得過幾秒！")
