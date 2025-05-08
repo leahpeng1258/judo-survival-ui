@@ -48,7 +48,7 @@ with st.form(key="input_form"):
     with col2:
         winner_has_waza_ari = st.selectbox("Winner has Waza-ari", [0, 1])
         year = st.selectbox("Match Year", [2020, 2024])
-        ranking_diff = st.slider("Ranking Difference (Winner - Rival)", -30, 30, 0)
+        ranking_diff = st.slider("Ranking Difference (Winner - Rival)", -100, 100, 0)
 
     st.markdown("⏱ **Enter Time Point (in seconds)**")
     t_input = st.number_input("Time", min_value=0, max_value=800, value=60, step=1)
@@ -74,8 +74,8 @@ if submit:
     st.subheader("📈 Survival Probability Curve")
 
     fig, ax = plt.subplots()
-    ax.plot(surv_func.index, surv_func.values[:, 0], label="🟦 S(t) Survival", color="#1f77b4", linewidth=2.5)
-    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="🟥 1 - S(t) End", color="#d62728", linewidth=2.5)
+    ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t) Survival Probability", color="#90d5de", linewidth=2.5)
+    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1 - S(t) End Probability", color="#de9090", linewidth=2.5)
     ax.axvline(x=t_input, color='gray', linestyle='--')
     ax.set_xlabel("Time (sec)")
     ax.set_ylabel("Probability")
@@ -87,5 +87,5 @@ if submit:
     st.markdown("### 📊 Predicted Probabilities at Selected Time")
     surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
     col1, col2 = st.columns(2)
-    col1.metric("S(t) – Survival", f"{surv_prob * 100:.2f}%")
-    col2.metric("1 - S(t) – End", f"{(1 - surv_prob) * 100:.2f}%")
+    col1.metric("S(t) – Survival Probability", f"{surv_prob * 100:.2f}%")
+    col2.metric("1 - S(t) – End Probability", f"{(1 - surv_prob) * 100:.2f}%")
