@@ -92,6 +92,16 @@ if submit:
     st.subheader("📈 Survival Probability Curve")
 
     fig, ax = plt.subplots()
+    title = (
+        f"S(t) | Gender: {gender}, "
+        f"Weight: {weight_label}, "
+        f"Shido: {winner_shido_count}, "
+        f"Waza-ari: {'Yes' if winner_has_waza_ari == 1 else 'No'}, "
+        f"Ranking Diff: {ranking_diff}, "
+        f"Year: {year}"
+    )
+    ax.set_title(title, fontsize=12, pad=15)
+    
     ax.plot(surv_func.index, surv_func.values[:, 0], label="S(t): Survival Probability", color="#92d4e0", linewidth=2.5)
     ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="1-S(t): End Probability", color="#e09294", linewidth=2.5)
     ax.axvline(x=t_input, color='gray', linestyle='--')
@@ -100,6 +110,7 @@ if submit:
     ax.legend()
     ax.grid(alpha=0.3)
     st.pyplot(fig)
+
 
     # 顯示數值
     st.markdown("### 📊 Predicted Probabilities at Selected Time")
