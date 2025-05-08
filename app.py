@@ -1,16 +1,13 @@
 import streamlit as st
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt  # 這是畫圖用
 import pandas as pd
 
-# -------------------------------
-# 頁面設定
-# -------------------------------
-
-# 設定 matplotlib 使用思源黑體（Noto Sans CJK TC）
-matplotlib.rcParams['font.family'] = 'Noto Sans TC'  # 推薦字型，支援繁體
-matplotlib.rcParams['axes.unicode_minus'] = False  # 確保負號顯示正確
+# 設定中文字型（建議 Noto Sans TC，需系統有安裝）
+matplotlib.rcParams['font.family'] = 'Noto Sans TC'
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 st.set_page_config(page_title="柔道求生預測器", layout="centered")
 st.title("🥋 柔道求生預測器")
