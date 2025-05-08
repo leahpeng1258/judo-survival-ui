@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt  # 這是畫圖用
 import pandas as pd
 
 # 設定中文字型（建議 Noto Sans TC，需系統有安裝）
-matplotlib.rcParams['font.family'] = 'Noto Sans TC'
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 matplotlib.rcParams['axes.unicode_minus'] = False
 
 st.set_page_config(page_title="柔道求生預測器", layout="centered")
