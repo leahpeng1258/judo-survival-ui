@@ -69,7 +69,7 @@ with st.form(key="input_form"):
         ranking_diff = st.slider("Ranking Difference (Winner - Rival)", -100, 100, 0)
 
     st.markdown("⏱ **Enter Time Point (in seconds)**")
-    t_input = st.number_input("Time", min_value=0, max_value=800, value=60, step=1)
+    t_input = st.number_input("Time (0s ~ 800s)", min_value=0, max_value=800, value=60, step=1)
 
     submit = st.form_submit_button("Predict!")
 
@@ -105,5 +105,5 @@ if submit:
     st.markdown("### 📊 Predicted Probabilities at Selected Time")
     surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
     col1, col2 = st.columns(2)
-    col1.metric("S(t): Survival Probability", f"{surv_prob * 100:.2f}%")
-    col2.metric("1-S(t): End Probability", f"{(1 - surv_prob) * 100:.2f}%")
+    col1.metric("Survival Probability", f"{surv_prob * 100:.2f}%")
+    col2.metric("End Probability", f"{(1 - surv_prob) * 100:.2f}%")
