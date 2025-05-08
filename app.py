@@ -25,9 +25,9 @@ aft_models = load_models()
 # 模型選擇（中文顯示）
 model_options = {
     "🏆 對手第一次指導後，我方一本": "aft_ippon_first",
-    "💪🏽 對手第一次指導後，比賽結束": "aft_end_first",
+    "💪🏽 對手第一次指導後，我方獲勝": "aft_end_first",
     "🏆 對手第二次指導後，我方一本": "aft_ippon_second",
-    "💪🏽 對手第二次指導後，比賽結束": "aft_end_second"
+    "💪🏽 對手第二次指導後，我方獲勝": "aft_end_second"
 }
 selected_label = st.selectbox("💡 請選擇預測場景", list(model_options.keys()))
 selected_model_key = model_options[selected_label]
