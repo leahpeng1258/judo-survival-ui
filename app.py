@@ -70,13 +70,13 @@ weight_label_en = weight_map_en.get(weight_label, weight_label)
 with st.form(key="input_form"):
     col1, col2 = st.columns(2)
     with col1:
-        winner_shido_count = st.selectbox("📛 得勝方獲得幾次指導？", [0, 1, 2])
+        winner_shido_count = st.selectbox("📛 我方獲得幾次Shido？", [0, 1, 2])
         year = st.selectbox("📅 比賽年份", [2020, 2024])
     with col2:
-        winner_has_waza_ari = st.selectbox("⚡ 得勝方有技有嗎？", [0, 1])
+        winner_has_waza_ari = st.selectbox("⚡ 我方有Waza-ari嗎？", [0, 1])
         ranking_diff = st.slider("📊 世界排名差距（勝者 - 敗者）", -100, 100, 0)
 
-    is_gs = st.selectbox("🕒 這場打到延長賽了嗎？", ["否", "是"]) == "是"
+    is_gs = st.selectbox("🕒 這場打到黃金得分了嗎？", ["否", "是"]) == "是"
 
     st.markdown("⏱ **預測某個時間點的機率**")
     t_input = st.number_input("請輸入秒數（0 到 800 秒）", min_value=0, max_value=800, value=60, step=1)
