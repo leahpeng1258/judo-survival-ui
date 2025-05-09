@@ -24,10 +24,10 @@ aft_models = load_models()
 
 # 模型選擇（中文顯示）
 model_options = {
-    "🏆 對手第一次指導後，我方一本": "aft_ippon_first",
-    "💪🏽 對手第一次指導後，我方獲勝": "aft_end_first",
-    "🏆 對手第二次指導後，我方一本": "aft_ippon_second",
-    "💪🏽 對手第二次指導後，我方獲勝": "aft_end_second"
+    "🏆 對手第一次Shido後，我方Ippon": "aft_ippon_first",
+    "💪🏽 對手第一次Shido後，我方獲勝": "aft_end_first",
+    "🏆 對手第二次Shido後，我方Ippon": "aft_ippon_second",
+    "💪🏽 對手第二次Shido後，我方獲勝": "aft_end_second"
 }
 selected_label = st.selectbox("💡 請選擇預測場景", list(model_options.keys()))
 selected_model_key = model_options[selected_label]
@@ -70,13 +70,13 @@ weight_label_en = weight_map_en.get(weight_label, weight_label)
 with st.form(key="input_form"):
     col1, col2 = st.columns(2)
     with col1:
-        winner_shido_count = st.selectbox("📛 我方獲得幾次Shido？", [0, 1, 2])
+        winner_shido_count = st.selectbox("📛 我方得到幾次Shido？", [0, 1, 2])
         year = st.selectbox("📅 比賽年份", [2020, 2024])
     with col2:
         winner_has_waza_ari = st.selectbox("⚡ 我方有Waza-ari嗎？", [0, 1])
         ranking_diff = st.slider("📊 世界排名差距（勝者 - 敗者）", -100, 100, 0)
 
-    is_gs = st.selectbox("🕒 這場打到黃金得分了嗎？", ["否", "是"]) == "是"
+    is_gs = st.selectbox("🕒 這場有打到黃金得分嗎？", ["否", "是"]) == "是"
 
     st.markdown("⏱ **預測某個時間點的機率**")
     t_input = st.number_input("請輸入秒數（0 到 800 秒）", min_value=0, max_value=800, value=60, step=1)
@@ -100,7 +100,7 @@ if submit:
     timeline = np.linspace(0, 800, 500)
     surv_func = aft_model.predict_survival_function(X, times=timeline)
 
-    st.subheader("📈 撐住機率 VS 結束機率")
+    st.subheader("📈 場上機率 VS 獲勝機率")
 
     fig, ax = plt.subplots()
     title = (
@@ -126,19 +126,19 @@ if submit:
     st.markdown("### 🧮 在指定秒數的預測結果")
     surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
     col1, col2 = st.columns(2)
-    col1.metric("撐住機率 💪", f"{surv_prob * 100:.2f}%")
-    col2.metric("結束機率 ☠️", f"{(1 - surv_prob) * 100:.2f}%")
+    col1.metric("場上機率 💪", f"{surv_prob * 100:.2f}%")
+    col2.metric("獲勝機率 ☠️", f"{(1 - surv_prob) * 100:.2f}%")
 
 # -------------------------------
 # 模型說明區塊
 # -------------------------------
 with st.expander("📘 模型說明與使用須知"):
     st.markdown("""
-這個求生模型是根據過往柔道比賽資料所建立的時間預測模型，屬於 **Log-Normal AFT（加速失敗時間）模型**。
+這個求生模型是根據過往柔道比賽資料所建立的時間預測模型，屬於 **Log-Normal AFT模型**。
 
-- **Survival Probability**（撐住機率）代表：選手在某個秒數還沒輸掉的機率。
-- **End Probability**（結束機率）代表：比賽已經結束的累積機率。
-- 模型會依照你的輸入條件（例如有沒有技有、獲得幾次指導、是否打到延長賽）來調整整體的生存曲線。
+- **Survival Probability**（場上機率）代表：選手在某個秒數還在場上的機率。
+- **End Probability**（獲勝機率）代表：選手在某個秒數比賽已經獲勝的機率。
+- 模型會依照你的輸入條件（例如有沒有Waza-ari、獲得幾次Shido、是否打到黃金得分）來調整整體的生存曲線。
 - 這些預測是根據統計趨勢，不是命運判定 😎
 
 若你發現預測很離譜，請不要找裁判或我負責
