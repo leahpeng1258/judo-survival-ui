@@ -108,19 +108,22 @@ if submit:
 
     fig, ax = plt.subplots()
 
-    # 🎯 水平虛線：從 y 軸畫到交點 x
-    ax.hlines(y=selected_win_prob, xmin=0, xmax=t_input, color='gray', linestyle='--')
+    # 🎯 主曲線：1 - S(t)
+    ax.plot(surv_func.index, win_prob, label="Win Probability", color="#e09294", linewidth=2.5)
     
-    # 🎯 垂直虛線：從 x 軸畫到交點 y
+    # 🎯 垂直虛線：從 x 軸畫到交會點 y
     ax.vlines(x=t_input, ymin=0, ymax=selected_win_prob, color='gray', linestyle='--')
+    
+    # 🎯 水平虛線：從 y 軸畫到交會點 x
+    ax.hlines(y=selected_win_prob, xmin=0, xmax=t_input, color='gray', linestyle='--')
     
     # 🎯 交會點圓點
     ax.scatter(t_input, selected_win_prob, color="white", edgecolor="black", zorder=5)
     
-    # 🎯 顯示百分比文字
+    # 🎯 標註文字
     ax.text(t_input + 10, selected_win_prob, f"{selected_win_prob*100:.1f}%", color="#e09294", va='center')
     
-    # 🔧 標籤與範圍
+    # 🔧 標籤與樣式
     ax.set_xlabel("Match Time (sec)")
     ax.set_ylabel("Win Probability")
     ax.set_xlim([0, 800])
@@ -131,5 +134,6 @@ if submit:
 
 
     # 🎯 預測結果數值顯示
-    st.markdown(f"### 🧮 在 {t_input} 秒數的預測結果")
+    st.markdown(f"### 🧮 在 {t_input} 秒的預測結果")
     st.metric("☠️ 獲勝機率", f"{selected_win_prob * 100:.2f}%")
+
