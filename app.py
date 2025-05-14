@@ -107,17 +107,31 @@ if submit:
     st.subheader("📈 指定條件下的獲勝機率")
 
     fig, ax = plt.subplots()
+
+    # 🎯 獲勝機率曲線
     ax.plot(surv_func.index, win_prob, label="Win Probability", color="#e09294", linewidth=2.5)
+
+    # 🎯 垂直虛線（輸入秒數）
     ax.axvline(x=t_input, color='gray', linestyle='--')
+
+    # 🎯 水平虛線（從 y=selected_win_prob 畫到 x=t_input）
+    ax.hlines(y=selected_win_prob, xmin=0, xmax=t_input, color='gray', linestyle='--')
+
+    # 🎯 圓點標註
     ax.scatter(t_input, selected_win_prob, color="#e09294", edgecolor="black", zorder=5)
+
+    # 🎯 標示預測數值
     ax.text(t_input + 10, selected_win_prob, f"{selected_win_prob*100:.1f}%", color="#e09294", va='center')
+
+    # 🎯 標籤與樣式
     ax.set_xlabel("Match Time (sec)")
     ax.set_ylabel("Win Probability")
-    ax.grid(alpha=0.3)
     ax.set_xlim([0, 800])
     ax.set_ylim([0, 1])
+    ax.grid(alpha=0.3)
+
     st.pyplot(fig)
 
+    # 🎯 預測結果數值顯示
     st.markdown("### 🧮 在指定秒數的預測結果")
     st.metric("☠️ 獲勝機率", f"{selected_win_prob * 100:.2f}%")
-
