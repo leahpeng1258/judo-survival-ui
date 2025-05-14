@@ -100,57 +100,24 @@ if submit:
     timeline = np.linspace(0, 800, 500)
     surv_func = aft_model.predict_survival_function(X, times=timeline)
 
-    st.subheader("📈 場上機率 VS 獲勝機率")
+    # 🎯 擷取獲勝機率 (1 - S)
+    win_prob = 1 - surv_func.values[:, 0]
+    selected_win_prob = np.interp(t_input, surv_func.index, win_prob)
+
+    st.subheader("📈 指定條件下的獲勝機率")
 
     fig, ax = plt.subplots()
-    title = (
-        f"Condition | "
-        f"Weight: {weight_label_en}, "
-        f"Shido: {winner_shido_count}, "
-        f"Waza-ari: {'Yes' if winner_has_waza_ari == 1 else 'No'}, "
-        f"Ranking Diff: {ranking_diff}, "
-        f"Year: {year}, "
-        f"GS: {'Yes' if is_gs else 'No'}"
-    )
-    ax.set_title(title, fontsize=12, pad=15)
-
-    ax.plot(surv_func.index, surv_func.values[:, 0], label="Survival Probability", color="#92d4e0", linewidth=2.5)
-    ax.plot(surv_func.index, 1 - surv_func.values[:, 0], label="End Probability", color="#e09294", linewidth=2.5)
+    ax.plot(surv_func.index, win_prob, label="Win Probability", color="#e09294", linewidth=2.5)
     ax.axvline(x=t_input, color='gray', linestyle='--')
+    ax.scatter(t_input, selected_win_prob, color="#e09294", edgecolor="black", zorder=5)
+    ax.text(t_input + 10, selected_win_prob, f"{selected_win_prob*100:.1f}%", color="#e09294", va='center')
     ax.set_xlabel("Match Time (sec)")
-    ax.set_ylabel("Probability")
-    ax.legend()
+    ax.set_ylabel("Win Probability")
     ax.grid(alpha=0.3)
+    ax.set_xlim([0, 800])
+    ax.set_ylim([0, 1])
     st.pyplot(fig)
 
     st.markdown("### 🧮 在指定秒數的預測結果")
-    surv_prob = np.interp(t_input, surv_func.index, surv_func.values[:, 0])
-    col1, col2 = st.columns(2)
-    col1.metric("場上機率 💪", f"{surv_prob * 100:.2f}%")
-    col2.metric("獲勝機率 ☠️", f"{(1 - surv_prob) * 100:.2f}%")
+    st.metric("☠️ 獲勝機率", f"{selected_win_prob * 100:.2f}%")
 
-# -------------------------------
-# 模型說明區塊
-# -------------------------------
-with st.expander("📘 模型說明與使用須知"):
-    st.markdown("""
-這個求生模型是根據過往柔道比賽資料所建立的時間預測模型，屬於 **Log-Normal AFT模型**。
-
-- **Survival Probability**（場上機率）代表：選手在某個秒數還在場上的機率。
-- **End Probability**（獲勝機率）代表：選手在某個秒數比賽已經獲勝的機率。
-- 模型會依照你的輸入條件（例如有沒有Waza-ari、獲得幾次Shido、是否打到黃金得分）來調整整體的生存曲線。
-- 這些預測是根據統計趨勢，不是命運判定 😎
-
-若你發現預測很離譜，請不要找裁判或我負責
-    """)
-
-with st.expander("🧬 使用變數一覽"):
-    st.markdown("""
-- 比賽性別（Gender）
-- 重量級別（Weight Class）
-- 得勝方獲得指導次數（Shido Count）
-- 是否有技有（Waza-ari）
-- 世界排名差距（Ranking Difference）
-- 比賽年份（Year）
-- 是否延長賽（Golden Score）
-    """)
