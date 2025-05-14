@@ -134,6 +134,6 @@ if submit:
 
 
     # 🎯 預測結果數值顯示
-    st.markdown(f"### 🧮 在 {t_input} 秒的預測結果")
+    st.markdown(f"### 🧮 在 {t_input} 秒下的預測結果")
     st.metric("☠️ 獲勝機率", f"{selected_win_prob * 100:.2f}%")
 
