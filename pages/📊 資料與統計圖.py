@@ -50,7 +50,7 @@ st.pyplot(fig)
 # -------------------------------
 st.markdown("### 2. 回合 × 類別 出賽數量")
 fig, ax = plt.subplots(figsize=(10, 6))
-sns.countplot(data=df, y="round", hue="category", order=df["round"].value_counts().index, palette=[COLOR1, COLOR2], ax=ax)
+sns.countplot(data=df, y="round", hue="category", order=df["round"].value_counts().index,  ax=ax)
 ax.set_title("Match Count by Round and Category")
 plt.tight_layout()
 st.pyplot(fig)
