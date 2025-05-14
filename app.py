@@ -8,7 +8,6 @@ import pandas as pd
 # 頁面設定
 # -------------------------------
 st.set_page_config(page_title="柔道求生預測器", layout="centered")
-st.sidebar.title("🥋 柔道生存預測器")
 st.title("🥋 柔道求生預測器")
 st.caption("來看看在各種條件下你撐得過幾秒！")
 st.markdown("---")
