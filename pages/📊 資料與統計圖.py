@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+import streamlit as st
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 # 1️⃣ 每年比賽人次（依性別）
 st.subheader("1️⃣ 每年比賽人次（依性別）")
 fig, ax = plt.subplots(figsize=(6, 4))
