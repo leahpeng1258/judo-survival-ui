@@ -4,6 +4,30 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# -------------------------------
+# 頁面設定
+# -------------------------------
+st.set_page_config(page_title="資料與統計圖", layout="centered")
+st.title("📊 柔道比賽資料與統計圖")
+st.caption("本頁面展示 2020 與 2024 年度比賽的描述統計資訊，圖表標籤為英文。")
+st.markdown("---")
+st.subheader("📥 載入資料")
+
+@st.cache_data
+def load_data():
+    url_2024 = "https://docs.google.com/spreadsheets/d/1c3vnGkJFP1ZnLTiW54Dc8cUiSA2tJySH/gviz/tq?tqx=out:csv&sheet=Sheet1"
+    url_2020 = "https://docs.google.com/spreadsheets/d/1I0jK3VZYKENDvTVJUMZ-k66zQStT5Uo4/gviz/tq?tqx=out:csv&sheet=Sheet1"
+    df_2024 = pd.read_csv(url_2024)
+    df_2020 = pd.read_csv(url_2020)
+    df_2024["year"] = 2024
+    df_2020["year"] = 2020
+    df = pd.concat([df_2024, df_2020], ignore_index=True)
+    return df
+
+# ✅ 這一行必須要有，才能正確定義 df
+df = load_data()
+df["has_ippon"] = df["ippon_sec"].notnull()
+
 # 1️⃣ 每年比賽人次（依性別）
 st.subheader("1️⃣ 每年比賽人次（依性別）")
 fig, ax = plt.subplots(figsize=(6, 4))
