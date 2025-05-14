@@ -3,3 +3,4 @@ lifelines
 matplotlib
 pandas
 numpy
+seaborn
