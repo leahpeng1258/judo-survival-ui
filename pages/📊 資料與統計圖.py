@@ -28,6 +28,11 @@ def load_data():
 df = load_data()
 df["has_ippon"] = df["ippon_sec"].notnull()
 
+COLOR1 = "#92d4e0"
+COLOR2 = "#e09294"
+sns.set(style="whitegrid")
+
+
 # 1️⃣ 每年比賽人次（依性別）
 st.subheader("1️⃣ 每年比賽人次（依性別）")
 fig, ax = plt.subplots(figsize=(6, 4))
