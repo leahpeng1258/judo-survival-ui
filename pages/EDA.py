@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # -------------------------------
-# 頁面標題與說明（繁體中文）
+# 頁面設定
 # -------------------------------
 st.set_page_config(page_title="資料與統計圖", layout="centered")
 st.title("📊 柔道比賽資料與統計圖")
@@ -31,86 +31,95 @@ df = load_data()
 df["has_ippon"] = df["ippon_sec"].notnull()
 
 # -------------------------------
-# 統計圖表區塊
+# 圖表參數
 # -------------------------------
-
+COLOR1 = "#92d4e0"
+COLOR2 = "#e09294"
 sns.set(style="whitegrid")
 
-def plot_and_show(fig):
-    st.pyplot(fig)
+# -------------------------------
+# 統計圖表
+# -------------------------------
 
-# 1️⃣ Year × Gender Count
-st.subheader("1️⃣ Year × Gender Match Count")
+# 1️⃣ 每年比賽人次（依性別）
+st.subheader("1️⃣ 每年比賽人次（依性別）")
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.countplot(data=df, x="year", hue="gender", ax=ax)
-ax.set_title("Year × Gender Match Count")
+sns.countplot(data=df, x="year", hue="gender", palette=[COLOR1, COLOR2], ax=ax)
+ax.set_title("每年比賽人次（依性別）")
 for container in ax.containers:
     ax.bar_label(container)
+plt.tight_layout()
 st.pyplot(fig)
 
-# 2️⃣ Round × Category
-st.subheader("2️⃣ Round × Category Match Count")
+# 2️⃣ 回合 × 類別 出賽數量
+st.subheader("2️⃣ 回合 × 類別 出賽數量")
 fig, ax = plt.subplots(figsize=(10, 6))
-sns.countplot(data=df, y="round", hue="category", order=df["round"].value_counts().index, ax=ax)
-ax.set_title("Round × Category Match Count")
+sns.countplot(data=df, y="round", hue="category", order=df["round"].value_counts().index, palette=[COLOR1, COLOR2], ax=ax)
+ax.set_title("回合 × 類別 出賽數量")
+plt.tight_layout()
 st.pyplot(fig)
 
-# 3️⃣ Year × Ippon Count
-st.subheader("3️⃣ Year × Ippon Count")
+# 3️⃣ 每年 Ippon 出現次數
+st.subheader("3️⃣ 每年 Ippon 出現次數")
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.countplot(data=df, x="year", hue="has_ippon", ax=ax)
-ax.set_title("Year × Ippon Count")
+sns.countplot(data=df, x="year", hue="has_ippon", palette=[COLOR1, COLOR2], ax=ax)
+ax.set_title("每年 Ippon 出現次數")
 ax.set_xlabel("Year")
 ax.set_ylabel("Count")
-ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
 ax.legend(title="Ippon", labels=["No", "Yes"])
 for container in ax.containers:
     ax.bar_label(container)
+plt.tight_layout()
 st.pyplot(fig)
 
-# 4️⃣ Ippon Occurrence
-st.subheader("4️⃣ Ippon Occurrence")
+# 4️⃣ 總體 Ippon 機率
+st.subheader("4️⃣ 總體 Ippon 機率")
 fig, ax = plt.subplots(figsize=(5, 4))
-sns.countplot(data=df, x="has_ippon", ax=ax)
+sns.countplot(data=df, x="has_ippon", palette=[COLOR1], ax=ax)
 ax.set_title("Ippon Occurrence")
 ax.set_xticklabels(["No Ippon", "Ippon"])
 for container in ax.containers:
     ax.bar_label(container)
+plt.tight_layout()
 st.pyplot(fig)
 
-# 5️⃣ Match Duration Histogram
-st.subheader("5️⃣ Match Duration Distribution")
+# 5️⃣ 比賽時間分布
+st.subheader("5️⃣ 比賽時間分布（秒）")
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.histplot(data=df, x="duration_sec", bins=30, kde=True, ax=ax)
+sns.histplot(data=df, x="duration_sec", bins=30, kde=True, color=COLOR1, ax=ax)
 ax.set_title("Match Duration (sec)")
+plt.tight_layout()
 st.pyplot(fig)
 
-# 6️⃣ Shido Count
-st.subheader("6️⃣ Shido Counts for Winner and Loser")
+# 6️⃣ Shido 數量分布
+st.subheader("6️⃣ 雙方 Shido 數量")
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-sns.countplot(data=df, x="winner_shido_count", ax=axes[0])
+sns.countplot(data=df, x="winner_shido_count", color=COLOR1, ax=axes[0])
 axes[0].set_title("Winner Shido Count")
-sns.countplot(data=df, x="loser_shido_count", ax=axes[1])
+sns.countplot(data=df, x="loser_shido_count", color=COLOR2, ax=axes[1])
 axes[1].set_title("Loser Shido Count")
 for ax in axes:
     for container in ax.containers:
         ax.bar_label(container)
+plt.tight_layout()
 st.pyplot(fig)
 
-# 7️⃣ Ranking Difference
-st.subheader("7️⃣ Winner - Loser Ranking Difference")
+# 7️⃣ 世界排名差距
+st.subheader("7️⃣ 勝者與敗者世界排名差距")
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.histplot(data=df, x="ranking_diff", bins=30, kde=True, ax=ax)
+sns.histplot(data=df, x="ranking_diff", bins=30, kde=True, color=COLOR1, ax=ax)
 ax.axvline(x=0, color='red', linestyle='--')
 ax.set_title("Winner - Loser Ranking Difference")
+plt.tight_layout()
 st.pyplot(fig)
 
-# 8️⃣ Golden Score
-st.subheader("8️⃣ Golden Score Occurrence")
+# 8️⃣ Golden Score 出現率
+st.subheader("8️⃣ Golden Score 發生次數")
 fig, ax = plt.subplots(figsize=(5, 4))
-sns.countplot(data=df, x="is_gs", ax=ax)
+sns.countplot(data=df, x="is_gs", palette=[COLOR1], ax=ax)
 ax.set_title("Golden Score Occurrence")
 ax.set_xticklabels(["False", "True"])
 for container in ax.containers:
     ax.bar_label(container)
+plt.tight_layout()
 st.pyplot(fig)
